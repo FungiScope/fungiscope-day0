@@ -47,7 +47,6 @@
           <h1>FungiScope® Day 0 / Case Timeline Calculator</h1>
           <p class="sub">Quickly convert calendar dates to relative study days and vice versa. No data is uploaded; everything runs locally in your browser.</p>
         </div>
-        <div class="tag" title="Browser timezone used for calculations">Timezone: <strong id="tz"></strong></div>
       </div>
 
       <div class="grid">
@@ -70,7 +69,7 @@
       <div class="row">
         <div>
           <label>New event label</label>
-          <input id="labelInput" type="text" placeholder="e.g., Blood culture collected" />
+          <input id="labelInput" type="text" placeholder="e.g., Blood sample collected" />
         </div>
         <div>
           <label>Event date</label>
@@ -149,7 +148,6 @@
     const $$ = (s, el=document) => [...el.querySelectorAll(s)];
 
     const day0El = $('#day0');
-    const tzEl = $('#tz');
     const tableBody = $('#eventsTable tbody');
     const labelInput = $('#labelInput');
     const dateInput = $('#dateInput');
@@ -163,9 +161,6 @@
     const fromDayLabel = $('#fromDayLabel');
     const fromDayValue = $('#fromDayValue');
     const localeSel = $('#localeSel');
-
-    // Init timezone label
-    tzEl.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
 
     // Helpers
     function toDateOnly(d){ // normalize to local date-only (midnight)
@@ -284,100 +279,4 @@
         rows.push([lbl, dt, rel]);
       });
       const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'fungiscope_day0_timeline.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
-
-    copyLinkBtn.addEventListener('click', async()=>{
-      updateQuery();
-      await navigator.clipboard.writeText(location.href);
-      alert('Link copied. Share this in the eCRF so Day 0 is pre-filled.');
-    });
-
-    clearAllBtn.addEventListener('click', ()=>{
-      if (!confirm('Clear all rows?')) return;
-      tableBody.innerHTML='';
-      renumber();
-    });
-
-    day0El.addEventListener('input', ()=>{ $$('#eventsTable tbody tr').forEach(computeRow); updateQuery(); });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e)=>{
-      if (e.ctrlKey && e.key === 'Enter'){ e.preventDefault(); addRowBtn.click(); }
-      if (e.ctrlKey && (e.key==='l' || e.key==='L')){ e.preventDefault(); day0El.focus(); }
-      if (e.key === 'Delete'){
-        const tr = e.target?.closest?.('tr');
-        if (tr && tableBody.contains(tr)) { tr.remove(); renumber(); }
-      }
-    });
-
-    // Prefill Day 0 from URL
-    const params = new URLSearchParams(location.search);
-    const pDay0 = params.get('day0');
-    if (pDay0) day0El.value = pDay0;
-
-    // Minimal i18n
-    const L = {
-      en: {
-        header: 'FungiScope® Day 0 / Case Timeline Calculator',
-        sub: 'Quickly convert calendar dates to relative study days and vice versa. No data is uploaded; everything runs locally in your browser.',
-        day0: 'Day 0 (earliest confirmation of IC/C)',
-        newLabel: 'New event label',
-        eventDate: 'Event date',
-        add: 'Add', fromRel: 'From relative day…',
-        thIdx:'#', thLabel:'Label', thDate:'Date', thRel:'Relative day', thAct:'Actions',
-        copySummary:'Copy summary', exportCSV:'Export CSV', copyLink:'Copy link with Day 0', clearAll:'Clear all',
-        def:'Definition note: In this campaign, Day 0 is the date of the earliest confirmation of invasive candidiasis/candidemia (e.g., first lab evidence such as “yeast” reported by microbiology that triggers therapy).',
-        computeTitle:'Compute calendar date from relative day', computeSub:'Enter a label and a relative day (e.g., -3 or +14). We’ll add a row with the computed calendar date.', cancel:'Cancel', add2:'Add'
-      },
-      de: {
-        header: 'FungiScope® Day 0 / Fall‑Zeitachsen‑Rechner',
-        sub: 'Kalenderdaten schnell in relative Studientage umrechnen – und umgekehrt. Alle Daten bleiben lokal im Browser, keine Übermittlung.',
-        day0: 'Tag 0 (früheste Bestätigung von IC/C)',
-        newLabel: 'Neues Ereignis – Bezeichnung',
-        eventDate: 'Ereignisdatum',
-        add: 'Hinzufügen', fromRel: 'Aus relativem Tag…',
-        thIdx:'#', thLabel:'Bezeichnung', thDate:'Datum', thRel:'Relativer Tag', thAct:'Aktionen',
-        copySummary:'Zusammenfassung kopieren', exportCSV:'Als CSV exportieren', copyLink:'Link mit Tag 0 kopieren', clearAll:'Alles löschen',
-        def:'Hinweis: In dieser Kampagne ist Tag 0 das Datum der frühesten Bestätigung einer invasiven Candida‑Infektion / Candidämie (z. B. erster Laborhinweis „Hefe“, der die Therapie auslöst).',
-        computeTitle:'Kalenderdatum aus relativem Tag berechnen', computeSub:'Bezeichnung und relativen Tag eingeben (z. B. −3 oder +14). Wir fügen eine Zeile mit dem Datum hinzu.', cancel:'Abbrechen', add2:'Hinzufügen'
-      }
-    };
-
-    function applyLocale(loc){
-      const t = L[loc] || L.en;
-      document.title = t.header;
-      $('h1').textContent = t.header;
-      $('.sub').textContent = t.sub;
-      $('label[for="day0"]').textContent = t.day0;
-      $('label[for="localeSel"]').textContent = 'Language';
-      $('label[for="labelInput"]').textContent = t.newLabel;
-      $('label[for="dateInput"]').textContent = t.eventDate;
-      addRowBtn.textContent = t.add;
-      addDayBtn.textContent = t.fromRel;
-      $$('#eventsTable thead th')[0].textContent = t.thIdx;
-      $$('#eventsTable thead th')[1].textContent = t.thLabel;
-      $$('#eventsTable thead th')[2].textContent = t.thDate;
-      $$('#eventsTable thead th')[3].textContent = t.thRel;
-      $$('#eventsTable thead th')[4].textContent = t.thAct;
-      copyTableBtn.textContent = t.copySummary;
-      exportCSVBtn.textContent = t.exportCSV;
-      copyLinkBtn.textContent = t.copyLink;
-      clearAllBtn.textContent = t.clearAll;
-      $('.footer div:nth-child(2)').textContent = t.def;
-      $('#fromDayDialog h3').textContent = t.computeTitle;
-      $('#fromDayDialog p').textContent = t.computeSub;
-      $('#fromDayDialog [value="cancel"]').textContent = t.cancel;
-      $('#fromDayDialog [value="ok"]').textContent = t.add2;
-    }
-
-    localeSel.addEventListener('change', ()=>applyLocale(localeSel.value));
-    applyLocale(localeSel.value);
-  </script>
-</body>
-</html>
+      const blob = new Blob([csv], {type:'text/csv
