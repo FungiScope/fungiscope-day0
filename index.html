@@ -29,6 +29,34 @@
   #day0::-webkit-calendar-picker-indicator {background-color: #fffbe6; }
   #day0:focus {border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.25);}
 
+  /* Highlight Day 0 date picker (Chrome/Edge/Safari robust) */
+#day0 {
+  background-color: #fffbe6 !important;   /* base */
+  background-clip: padding-box;
+}
+
+/* The editable part inside the date input */
+#day0::-webkit-datetime-edit,
+#day0::-webkit-datetime-edit-fields-wrapper,
+#day0::-webkit-datetime-edit-text,
+#day0::-webkit-datetime-edit-year-field,
+#day0::-webkit-datetime-edit-month-field,
+#day0::-webkit-datetime-edit-day-field {
+  background-color: #fffbe6 !important;
+}
+
+/* Calendar icon chip on the right */
+#day0::-webkit-calendar-picker-indicator {
+  background-color: #fffbe6 !important;
+  border-radius: 4px;
+}
+
+/* Optional: focus styling to match the yellow theme */
+#day0:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245,158,11,.25);
+}
+
   .btn{appearance:none;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;transition:transform .05s ease, box-shadow .2s}
   .btn:active{transform:translateY(1px)}
   .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(42,93,255,.28)}
@@ -338,6 +366,7 @@
 </script>
 </body>
 </html>
+
 
 
 
