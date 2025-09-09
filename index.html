@@ -266,6 +266,7 @@ t<!DOCTYPE html>
 
 function setMaxTodayForDay0() {
   const todayStr = fmtISO(new Date());
+  
   day0El.max = todayStr;                 // prevent picking a future date in the picker
   if (day0El.value && day0El.value > todayStr) {
     day0El.value = '';             // clamp back to empty if a future date was set
@@ -360,10 +361,14 @@ function setMaxTodayForDay0() {
     renumber();
   });
 
-  day0El.addEventListener('input', ()=>{
-    $$('#eventsTable tbody tr').forEach(computeRow); 
-    updateQuery();
-  });
+day0El.addEventListener('input', ()=>{
+  const todayStr = fmtISO(new Date());
+  if (day0El.value && day0El.value > todayStr) {
+    day0El.value = '';   // reset back to empty (default) if a future date is typed/pasted
+  }
+  $$('#eventsTable tbody tr').forEach(computeRow); 
+  updateQuery();
+});
 
   // Prefill from URL and language
   const params=new URLSearchParams(location.search); 
@@ -377,6 +382,7 @@ function setMaxTodayForDay0() {
 </script>
 </body>
 </html>
+
 
 
 
