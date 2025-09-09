@@ -271,6 +271,8 @@ function setMaxTodayForDay0() {
     day0El.value = '';             // clamp back to empty if a future date was set
   }
 }
+ 
+  setMaxTodayForDay0();
   
   function renumber(){ $$('#eventsTable tbody tr').forEach((tr,i)=>$('.idx',tr).textContent=i+1); }
 
@@ -375,6 +377,7 @@ function setMaxTodayForDay0() {
 </script>
 </body>
 </html>
+
 
 
 
