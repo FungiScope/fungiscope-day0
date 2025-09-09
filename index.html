@@ -279,14 +279,15 @@ function setMaxTodayForDay0() {
   
   function renumber(){ $$('#eventsTable tbody tr').forEach((tr,i)=>$('.idx',tr).textContent=i+1); }
 
-  function moveRow(tr, dir) {
-  // dir = -1 (up) or +1 (down)
-  if (dir === -1) {
-    const prev = tr.previousElementSibling;
-    if (prev) tr.parentNode.insertBefore(tr, prev);
+function moveRow(tr, dir) {
+  const sib = dir < 0 ? tr.previousElementSibling : tr.nextElementSibling;
+  if (!sib) return; // first row can't move up, last row can't move down
+  if (dir < 0) {
+    // move up: put current row before the previous one
+    sib.before(tr);
   } else {
-    const next = tr.nextElementSibling;
-    if (next) tr.parentNode.insertBefore(next, tr); // swap with next to move down
+    // move down: put current row after the next one
+    sib.after(tr);
   }
   renumber();
 }
@@ -398,6 +399,7 @@ day0El.addEventListener('input', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
