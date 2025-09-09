@@ -44,13 +44,7 @@ t<!DOCTYPE html>
 #day0::-webkit-datetime-edit-day-field {
   background-color: #e6ffed  !important;
 }
-/* Change font + highlight color when clicking inside */
-#day0::-webkit-datetime-edit-year-field:focus,
-#day0::-webkit-datetime-edit-month-field:focus,
-#day0::-webkit-datetime-edit-day-field:focus {
-  color: #065f46 !important;              /* dark green text */
-  background-color: #bbf7d0 !important;   /* soft green highlight */
-}
+
   
 /* Calendar icon chip on the right */
 #day0::-webkit-calendar-picker-indicator {
@@ -270,6 +264,14 @@ t<!DOCTYPE html>
   const diffDays = (a,b) => Math.round((toDateOnly(b)-toDateOnly(a))/86400000);
   const addDays = (d,n) => { const b=toDateOnly(d); const r=new Date(b); r.setDate(r.getDate()+Number(n)); return r; };
 
+function setMaxTodayForDay0() {
+  const todayStr = fmtISO(new Date());
+  day0El.max = todayStr;                 // prevent picking a future date in the picker
+  if (day0El.value && day0El.value > todayStr) {
+    day0El.value = '';             // clamp back to empty if a future date was set
+  }
+}
+  
   function renumber(){ $$('#eventsTable tbody tr').forEach((tr,i)=>$('.idx',tr).textContent=i+1); }
 
   function computeRow(tr){
@@ -373,6 +375,7 @@ t<!DOCTYPE html>
 </script>
 </body>
 </html>
+
 
 
 
