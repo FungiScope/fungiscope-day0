@@ -279,6 +279,18 @@ function setMaxTodayForDay0() {
   
   function renumber(){ $$('#eventsTable tbody tr').forEach((tr,i)=>$('.idx',tr).textContent=i+1); }
 
+  function moveRow(tr, dir) {
+  // dir = -1 (up) or +1 (down)
+  if (dir === -1) {
+    const prev = tr.previousElementSibling;
+    if (prev) tr.parentNode.insertBefore(tr, prev);
+  } else {
+    const next = tr.nextElementSibling;
+    if (next) tr.parentNode.insertBefore(next, tr); // swap with next to move down
+  }
+  renumber();
+}
+  
   function computeRow(tr){
     const d0=day0El.valueAsDate, dt=$('.dt',tr).valueAsDate, cell=$('.rd',tr);
     if(!d0 || !dt){ cell.innerHTML='<span class="muted">—</span>'; tr.dataset.rel=''; return; }
@@ -292,6 +304,8 @@ function setMaxTodayForDay0() {
     $('.act-del',tr).addEventListener('click', ()=>{ tr.remove(); renumber(); });
     $('.act-dup',tr).addEventListener('click', ()=> addRow($('.lbl',tr).value,$('.dt',tr).value));
     $('.act-copy',tr).addEventListener('click', async()=>{ const rel=tr.dataset.rel??''; if(rel==='') return; const sign=rel>0?'+':''; await navigator.clipboard.writeText(`Day ${sign}${rel}`); const old=$('.act-copy',tr).textContent; $('.act-copy',tr).textContent=i18n().copyRow; setTimeout(()=>$('.act-copy',tr).textContent=old,900); });
+    $('.act-up', tr).addEventListener('click', () => moveRow(tr, -1));
+    $('.act-down', tr).addEventListener('click', () => moveRow(tr, +1));
     tableBody.appendChild(tr); computeRow(tr); renumber();
   }
 
@@ -384,6 +398,7 @@ day0El.addEventListener('input', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
