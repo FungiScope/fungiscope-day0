@@ -201,7 +201,7 @@
     exportCSVBtn.textContent = t.exportCSV;
     copyLinkBtn.textContent = t.copyLink;
     clearAllBtn.textContent = t.clearAll;
-    $('#footerNote').textContent = t.footer;
+    $('#footerNote').innerHTML = t.footer;
     const nb = document.getElementById('noticeBox'); 
     if (nb && t.notice) { nb.innerHTML = t.notice; }
     labelInput.placeholder = t.phLabel;
@@ -332,4 +332,5 @@
 </script>
 </body>
 </html>
+
 
