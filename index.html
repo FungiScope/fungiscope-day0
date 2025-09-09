@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+t<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -44,7 +44,14 @@
 #day0::-webkit-datetime-edit-day-field {
   background-color: #e6ffed  !important;
 }
-
+/* Change font + highlight color when clicking inside */
+#day0::-webkit-datetime-edit-year-field:focus,
+#day0::-webkit-datetime-edit-month-field:focus,
+#day0::-webkit-datetime-edit-day-field:focus {
+  color: #065f46 !important;              /* dark green text */
+  background-color: #bbf7d0 !important;   /* soft green highlight */
+}
+  
 /* Calendar icon chip on the right */
 #day0::-webkit-calendar-picker-indicator {
   background-color: #e6ffed  !important;
@@ -366,6 +373,7 @@
 </script>
 </body>
 </html>
+
 
 
 
