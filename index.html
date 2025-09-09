@@ -23,6 +23,12 @@
   input[type="date"]::-webkit-datetime-edit-text{color:#6b7280}
   input[type="date"]{background-image:none}
 
+   /* Highlight Day 0 input only */
+  #day0 {background: #fffbe6; /* soft yellow */}
+  #day0::-webkit-datetime-edit {background-color: #fffbe6; }
+  #day0::-webkit-calendar-picker-indicator {background-color: #fffbe6; }
+  #day0:focus {border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.25);}
+
   .btn{appearance:none;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;transition:transform .05s ease, box-shadow .2s}
   .btn:active{transform:translateY(1px)}
   .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(42,93,255,.28)}
@@ -332,5 +338,6 @@
 </script>
 </body>
 </html>
+
 
 
