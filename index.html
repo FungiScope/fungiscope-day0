@@ -292,11 +292,14 @@ function moveRow(tr, dir) {
   renumber();
 }
   
-  function computeRow(tr){
-    const d0=day0El.valueAsDate, dt=$('.dt',tr).valueAsDate, cell=$('.rd',tr);
-    if(!d0 || !dt){ cell.innerHTML='<span class="muted">—</span>'; tr.dataset.rel=''; return; }
-    const rel=diffDays(d0,dt); const sign=rel>0?'+':''; cell.innerHTML=`<span class="pill">Day <strong>${sign}${rel}</strong></span>`; tr.dataset.rel=rel;
-  }
+function computeRow(tr){
+  const d0 = day0El.valueAsDate, dt = $('.dt',tr).valueAsDate, cell = $('.rd',tr);
+  if(!d0 || !dt){ cell.innerHTML = '<span class="muted">—</span>'; tr.dataset.rel=''; return; }
+  const rel = diffDays(d0, dt);
+  // Show only the number: positives like "5", negatives like "-3", zero "0"
+  cell.innerHTML = `<span class="pill"><strong>${rel}</strong></span>`;
+  tr.dataset.rel = rel;
+}
 
   function addRow(lbl='', dateStr=''){
     const tpl=$('#rowTpl').content.cloneNode(true); const tr=tpl.querySelector('tr');
@@ -304,7 +307,7 @@ function moveRow(tr, dir) {
     $('.dt',tr).addEventListener('input', ()=>computeRow(tr));
     $('.act-del',tr).addEventListener('click', ()=>{ tr.remove(); renumber(); });
     $('.act-dup',tr).addEventListener('click', ()=> addRow($('.lbl',tr).value,$('.dt',tr).value));
-    $('.act-copy',tr).addEventListener('click', async()=>{ const rel=tr.dataset.rel??''; if(rel==='') return; const sign=rel>0?'+':''; await navigator.clipboard.writeText(`Day ${sign}${rel}`); const old=$('.act-copy',tr).textContent; $('.act-copy',tr).textContent=i18n().copyRow; setTimeout(()=>$('.act-copy',tr).textContent=old,900); });
+    $('.act-copy',tr).addEventListener('click', async()=>{  const rel = tr.dataset.rel ?? '';  if(rel === '') return;  await navigator.clipboard.writeText(String(rel)); const old = $('.act-copy',tr).textContent;  $('.act-copy',tr).textContent = i18n().copyRow;  setTimeout(()=>$('.act-copy',tr).textContent = old, 900);});
     $('.act-up', tr).addEventListener('click', () => moveRow(tr, -1));
     $('.act-down', tr).addEventListener('click', () => moveRow(tr, +1));
     tableBody.appendChild(tr); computeRow(tr); renumber();
@@ -333,18 +336,17 @@ function moveRow(tr, dir) {
     addRow(lbl, fmtISO(d));
   });
 
-  copyTableBtn.addEventListener('click', async()=>{
-    const lines = [day0El.value ? `Day 0: ${day0El.value}` : 'Day 0: —', ''];
-    $$('#eventsTable tbody tr').forEach(tr=>{
-      const lbl=$('.lbl',tr).value||'—';
-      const dt=$('.dt',tr).value||'—';
-      const rel=tr.dataset.rel??'—';
-      const sign=rel>0?'+':'';
-      lines.push(`${lbl}\t${dt}\tDay ${rel==='—'?'—':sign+rel}`);
-    });
-    await navigator.clipboard.writeText(lines.join('\n'));
-    alert('Summary copied to clipboard.');
+copyTableBtn.addEventListener('click', async()=>{
+  const lines = [day0El.value ? `Day 0: ${day0El.value}` : 'Day 0: —', ''];
+  $$('#eventsTable tbody tr').forEach(tr=>{
+    const lbl = $('.lbl',tr).value || '—';
+    const dt  = $('.dt',tr).value || '—';
+    const rel = tr.dataset.rel ?? '—';
+    lines.push(`${lbl}\t${dt}\t${rel === '—' ? '—' : rel}`); // just the number
   });
+  await navigator.clipboard.writeText(lines.join('\n'));
+  alert('Summary copied to clipboard.');
+});
 
   exportCSVBtn.addEventListener('click', ()=>{
     const rows=[[i18n().thLabel,i18n().thDate,i18n().thRel]];
@@ -399,6 +401,7 @@ day0El.addEventListener('input', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
